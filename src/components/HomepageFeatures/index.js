@@ -39,23 +39,16 @@ const FeatureList = [
 ];
 
 function Feature({ Svg, title, description, link }) {
-  const style = {
-    color: "--ifm-font-color-base"
-  };
   return (
     <div className={clsx("col col--4")}>
       <div className="text--center">
-        <a href={link}>
-          <Svg className={styles.featureSvg} role="img" />
-        </a>
+        <Svg className={styles.featureSvg} role="img" />
       </div>
       <div className="text--center padding-horiz--md">
-        <a href={link} style={style}>
-          <h3>{title}</h3>
-        </a>
-        <a href={link} style={style}>
-          <p>{description}</p>
-        </a>
+        <h3>{title}</h3>
+        <p>
+          {description} <a href={link}>[Click]</a>
+        </p>
       </div>
     </div>
   );
