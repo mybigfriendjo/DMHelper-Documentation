@@ -2,6 +2,7 @@
   "label": "Importing & Exporting XML Items",
   "position": 10,
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "description": "Got some Encounters, Adventures, (N)PCs that you want to use in another campaign? Or some Homebrew monsters that you want to share with others? We got you covered. You can export pretty much any item in the Menu Tree, as well as Monsters into a file that you can then import in another campaign."
   }
 }
