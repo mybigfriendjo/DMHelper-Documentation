@@ -4,17 +4,7 @@ sidebar_position: 5
 
 # Reference [quickref\_data.xml]
 
-export const LightHighlight = ({children, color}) => (
-  <span
-    style={{
-      backgroundColor: color,
-      borderRadius: '2px',
-      color: '#1f1f1f',
-      padding: '0.2rem',
-    }}>
-    {children}
-  </span>
-);
+import {LightHighlight} from "@site/src/components/highlight";
 
 This file contains the data for the "Reference" Window in DMHelper.
 

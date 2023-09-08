@@ -28,3 +28,17 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.codestylelight {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--ifm-code-font-size);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+.codestyledark {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--ifm-code-font-size);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}

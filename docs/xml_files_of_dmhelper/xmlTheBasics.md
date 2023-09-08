@@ -4,34 +4,11 @@ sidebar_position: 2
 
 # XML - The Basics
 
-export const LightHighlight = ({children, color}) => (
-  <span
-    style={{
-      backgroundColor: color,
-      borderRadius: '2px',
-      color: '#1f1f1f',
-      padding: '0.2rem',
-    }}>
-    {children}
-  </span>
-);
-
-export const DarkHighlight = ({children, color}) => (
-  <span
-    style={{
-      backgroundColor: color,
-      borderRadius: '2px',
-      color: '#e0e0e0',
-      padding: '0.2rem',
-    }}>
-    {children}
-  </span>
-);
+import {LightHighlight, DarkHighlight} from "@site/src/components/highlight";
 
 At its base XML is a File that has a certain structure that is humanly readable and also readable for DMHelper. Don't worry it won't be long - we just want you to know what we're talking about when using certain terms and you getting a feeling for what you are doing.
 
-Every XML-File starts with this Line:
-`<?xml version="1.0" encoding="UTF-8"?>`
+Every XML-File starts with this Line: `<?xml version="1.0" encoding="UTF-8"?>`
 
 You can pretty much ignore it as this only defines the File as being an XML-File. It is a standard that everybody should follow but that doesn't change the actual content.
 
