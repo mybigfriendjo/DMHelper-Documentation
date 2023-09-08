@@ -3,6 +3,7 @@
   "position": 6,
   "link": {
     "type": "generated-index",
-    "description": "The Combat View is where you control and run combat encounters or similar (like chase sequences). You can use combat encounters as just a way to keep track of the initiative order using our initiative tracker. We believe though, the true magic of DMH is in its full Combat View which is only available while you have a map imported into the encounter. This allows for full use of the initiative tracker, real time fog of war, player/mob tokens to display positioning, and spell effects all with ease."
+    "description": "The Combat View is where you control and run combat encounters or similar (like chase sequences). You can use combat encounters as just a way to keep track of the initiative order using our initiative tracker. We believe though, the true magic of DMH is in its full Combat View which is only available while you have a map imported into the encounter. This allows for full use of the initiative tracker, real time fog of war, player/mob tokens to display positioning, and spell effects all with ease.",
+    "slug": "/category/combatView"
   }
 }

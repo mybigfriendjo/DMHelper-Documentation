@@ -12,4 +12,4 @@ The Menu Ribbon is broken up into multiple tabs, each of these serve as a way to
 
 Through these tabs you can access and navigate almost every facet of the application.
 
-More about the Menu Ribbon #TODO add link
+More about the Menu Ribbon [here](/docs/category/menuRibbon)

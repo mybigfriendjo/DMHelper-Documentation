@@ -45,4 +45,4 @@ To be fair to all the other cool features, there's actually a lot of useful stuf
 
 :::
 
-The controls around publishing to the Player's Window are described on page #TODO add link
+The controls around publishing to the Player's Window are described [here](/docs/menu_ribbon/playerWindowAndPublish)
