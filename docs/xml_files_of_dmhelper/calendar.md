@@ -12,7 +12,7 @@ The calendar File contains the Data that is shown within the Calendar Dialog of 
 Minimal Example:
 
 ```xml
-<root xmlns:xsi="http:<area />//www.<area />w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="calendar.xsd">
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="calendar.xsd">
   <calendar name="Gregorian" weeklength="7">
     <month name="January" days="31"/>
   </calendar>
@@ -26,7 +26,7 @@ You can Copy the `calendar` element as many times as you want. Just name them in
 Example with 2 Calendars:
 
 ```xml
-<root xmlns:xsi="http:<area />//www.<area />w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="calendar.xsd">
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="calendar.xsd">
   <calendar name="Gregorian" weeklength="7">
     <month name="January" days="31"/>
   </calendar>
