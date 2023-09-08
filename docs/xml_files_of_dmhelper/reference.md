@@ -33,16 +33,19 @@ An example of an addition in the XML and the results of those entries
 A special mention here would be that the text content of the bullets has to be wrapped in a special CDATA section. Meaning "character data" that can contain characters like `<` or `>` which would otherwise be reserved for xml tags. This enables the use of formatting tags like `<b>` for bold text, `<i>` for italic text and `<u>` for underlined text.
 Make sure that you put `<![CDATA[` at the beginning of the text and `]]` at the end of it
 
+<!-- markdownlint-disable MD033 Exception to Rule MD033 needed for highlighting -->
+
 <LightHighlight color="yellow">&lt;![CDATA[</LightHighlight> <LightHighlight color="lime">this text can contain &lt; and &gt; without being a problem</LightHighlight> <LightHighlight color="yellow">]]</LightHighlight>
 
-<br />
-<br />
+<!-- markdownlint-enable MD033 -->
 
-You can either edit `<sections>` that correspond with the items in the drop down list
+---
+
+You can either edit `<sections>` that correspond with the items in the drop down list...
 
 ![Reference Sections](./img/referenceSections.png)
 
-or `<subsections>` that correspond to the items within a section
+...or `<subsections>` that correspond to the items within a section
 
 ![Reference Sub Sections](./img/referenceSubSections.png)
 

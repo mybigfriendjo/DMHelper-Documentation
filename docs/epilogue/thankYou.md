@@ -4,7 +4,9 @@ sidebar_position: 1
 
 # Thank You
 
+<!-- markdownlint-disable MD026 Exception to Rule MD026 needed for emphasis :) -->
 ## Thank YOU, yeah we mean you reading this right now!
+<!-- markdownlint-enable MD026 -->
 
 Seriously from all of us here on the DMH Team thank you so much for downloading, using, providing your feedback, and being a part of the DMH community! We can’t tell you how much it means that you are enjoying DMH, and we hope that we continue to make DMH your go to application for all things D\&D!
 

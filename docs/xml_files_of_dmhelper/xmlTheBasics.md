@@ -55,7 +55,9 @@ Elements can also act as Container and contain Sub-Elements
 
 ![Sub Element Example](./img/subElementExample.png)
 
+<!-- markdownlint-disable MD033 Exception to Rule MD033 needed for highlighting -->
 The <LightHighlight color="magenta">"parent-Element"</LightHighlight> still uses <DarkHighlight color="blue">Tags</DarkHighlight> but instead of a plain Text as a <LightHighlight color="lime">Value</LightHighlight> there now is another <LightHighlight color="orange">"Sub-Element"</LightHighlight> or also called <LightHighlight color="orange">"Child-Element"</LightHighlight>.
+<!-- markdownlint-enable MD033 -->
 
 You will also note that the Sub-Element is on a separate Line. This has no functional implications for the XML-File. The only place where you need to be careful with new-lines is with the Values.
 
@@ -72,19 +74,14 @@ But not like this:
 ue</subelement></element>
 ```
 
-Every Element has an <DarkHighlight color="blue">opening Tag</DarkHighlight> and a <LightHighlight color="cornflowerblue">closing Tag</LightHighlight>:
-<DarkHighlight color="blue">&lt;tag&gt;</DarkHighlight><LightHighlight color="cornflowerblue">&lt;/tag&gt;</LightHighlight>
+<!-- markdownlint-disable MD033 Exception to Rule MD033 needed for highlighting -->
+| Tags | Description |
+| :---: | --- |
+| <DarkHighlight color="blue">&lt;tag&gt;</DarkHighlight><LightHighlight color="cornflowerblue">&lt;/tag&gt;</LightHighlight> | Every Element has an <DarkHighlight color="blue">opening Tag</DarkHighlight> and a <LightHighlight color="cornflowerblue">closing Tag</LightHighlight> |
+| <DarkHighlight color="blue">&lt;tag /&gt;</DarkHighlight> | If an Element contains no value it can be shortened to a special "empty" Tag Notation |
+<!-- markdownlint-enable MD033 -->
 
-<br />
-<br />
-
-If an Element contains no value it can be shortened to a special "empty" Tag Notation:
-<DarkHighlight color="blue">&lt;tag /&gt;</DarkHighlight>
-
-<br />
-<br />
-
-The 2 shown ways are functionally exactly the same.
+These 2 ways are functionally exactly the same.
 
 ## Attributes
 
@@ -92,7 +89,11 @@ The 2 shown ways are functionally exactly the same.
 <date year="800" month="5" day="1" />
 ```
 
+<!-- markdownlint-disable MD033 Exception to Rule MD033 needed for highlighting -->
+
 A <DarkHighlight color="blue">Tag</DarkHighlight> can have <LightHighlight color="orange">Attributes</LightHighlight> that have a <LightHighlight color="lime">name</LightHighlight> and a <LightHighlight color="magenta">value</LightHighlight>:
+
+<!-- markdownlint-enable MD033 -->
 
 ![Attribute Example](./img/attributeExample.png)
 
