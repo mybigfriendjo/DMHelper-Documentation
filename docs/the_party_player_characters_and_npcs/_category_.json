@@ -2,6 +2,7 @@
   "label": "The Party, Player Characters & NPCs",
   "position": 8,
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "slug": "/category/thePartyPlayerCharactersAndNPCs"
   }
 }

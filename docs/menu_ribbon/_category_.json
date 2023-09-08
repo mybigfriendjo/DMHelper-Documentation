@@ -3,6 +3,7 @@
   "position": 3,
   "link": {
     "type": "generated-index",
-    "description": "The Menu Ribbon is located at the top of DM Helper, and will help you navigate throughout the majority of DMH's functionality. This includes several tabs, some of which are specific to certain areas of DMH; those tabs are the following DM Helper, Campaign, Tools, Map, Combat, Text, and Animation. The first three tabs listed will always be available to you and help you with interacting with the application itself, the campaign tree, and DM tools that range from a timer to XML tables. In the following pages we are going to take a deep dive on all of these tabs and how you can use them to your advantage to keep the flow of your games effortless."
+    "description": "The Menu Ribbon is located at the top of DM Helper, and will help you navigate throughout the majority of DMH's functionality. This includes several tabs, some of which are specific to certain areas of DMH; those tabs are the following DM Helper, Campaign, Tools, Map, Combat, Text, and Animation. The first three tabs listed will always be available to you and help you with interacting with the application itself, the campaign tree, and DM tools that range from a timer to XML tables. In the following pages we are going to take a deep dive on all of these tabs and how you can use them to your advantage to keep the flow of your games effortless.",
+    "slug": "/category/menuRibbon"
   }
 }

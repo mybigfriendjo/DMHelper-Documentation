@@ -3,6 +3,7 @@
   "position": 5,
   "link": {
     "type": "generated-index",
-    "description": "The DM View is what you as a Dungeon Master will see the most of, giving you access to world build using the campaign tree, set up maps, FoW for those maps, and edit your text/text animations. None of the details that are shown here are readily available to the players in the player window, until you publish the object you are viewing. The Combat View also exists within the DM View but we'll discuss more on that in later pages."
+    "description": "The DM View is what you as a Dungeon Master will see the most of, giving you access to world build using the campaign tree, set up maps, FoW for those maps, and edit your text/text animations. None of the details that are shown here are readily available to the players in the player window, until you publish the object you are viewing. The Combat View also exists within the DM View but we'll discuss more on that in later pages.",
+    "slug": "/category/theDMView"
   }
 }

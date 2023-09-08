@@ -10,4 +10,4 @@ The Combat View allows you to organize and view the combat initiative, while sti
 
 The combat view will be used in every combat encounter and give you the ability to track and organize combat in a more effective way. So get to know it intimately, you'll need it for the hell you're gonna put your party through, maybe quite literally hell.
 
-More about the Combat View #TODO add link
+More about the Combat View [here](/docs/category/combatView)

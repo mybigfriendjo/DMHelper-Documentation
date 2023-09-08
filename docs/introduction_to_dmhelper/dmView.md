@@ -12,4 +12,4 @@ To clarify all changes you make to your fog of war, maps, creatures, etc are abl
 
 This ensures that you can get the drop on your party without them knowing, so bring on the secret hordes of Tarrasques you have hidden away after that boss fight your level 4 party barely just beat… I mean no, why would you ever do that?
 
-More about the DM View #TODO add link
+More about the DM View [here](/docs/category/theDMView)
