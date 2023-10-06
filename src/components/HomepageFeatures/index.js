@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 const FeatureList = [
   {
     title: "DMHelper on itch.io",
-    Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
+    Img: require("@site/static/img/icon_preview.png").default,
     description: (
       <>
         DMHelper is Donationware. You can download it for free, and if you like
@@ -16,7 +16,7 @@ const FeatureList = [
   },
   {
     title: "DMHelper on Discord",
-    Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
+    Img: require("@site/static/img/icon_playerswindow.png").default,
     description: (
       <>
         Didn't find an answer to your question here? Join the Discord server and
@@ -27,7 +27,7 @@ const FeatureList = [
   },
   {
     title: "DMHelper Website",
-    Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
+    Img: require("@site/static/img/icon_contentparty.png").default,
     description: (
       <>
         Official Website for DMHelper. You can find news, information, and
@@ -38,11 +38,11 @@ const FeatureList = [
   },
 ];
 
-function Feature({ Svg, title, description, link }) {
+function Feature({ Img, title, description, link }) {
   return (
     <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img className={styles.featureImg} role="img" src={Img} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>

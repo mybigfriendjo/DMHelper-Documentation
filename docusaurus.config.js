@@ -62,12 +62,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/dmhelper192x192.png',
+      image: 'img/dmhelper_backed.png',
       navbar: {
         title: 'DMHelper Documentation',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/dmhelper192x192.png',
+          src: 'img/dmhelper_backed.png',
         },
         items: [
           {
