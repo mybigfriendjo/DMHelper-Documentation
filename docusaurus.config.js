@@ -61,6 +61,10 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata:[
+        {property: 'og:title', content: 'DMHelper Documentation'},
+        {property: 'og:description', content: 'Helping DMs focus on the Game'},
+      ],
       // Replace with your project's social card
       image: 'img/dmhelper_backed.png',
       navbar: {
