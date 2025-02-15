@@ -77,7 +77,7 @@ The Camera Frame is denoted by the blue rectangle in the 'DM View' and by defaul
 
 ### Ruler
 
-The Ruler is used to measure distance on a map from point A to B and can optionally include a vertical distance in its calculations. It is important to accurately set your grid size in the Grid functions before using the Ruler, as distance is calculated based on the current grid size \textit{(See more about grid sizing in the next section)}. The Ruler has four components to it:
+The Ruler is used to measure distance on a map from point A to B and can optionally include a vertical distance in its calculations. It is important to accurately set your grid size in the Grid functions before using the Ruler, as distance is calculated based on the current grid size _(See more about grid sizing in the next section)_. The Ruler has four components to it:
 
 <!-- markdownlint-disable MD033 Exception to Rule MD033 needed for setting explicit width -->
 |                                         Button                                          | Action                                                                                                                                                                                                            |
