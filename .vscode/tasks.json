@@ -1,0 +1,10 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "docs: start dev server", "type": "npm", "script": "start", "isBackground": true, "problemMatcher": []},
+    {"label": "docs: build website", "type": "npm", "script": "build", "group": {"kind": "build", "isDefault": true}, "problemMatcher": []},
+    {"label": "docs: build PDF", "type": "npm", "script": "pdf", "problemMatcher": []},
+    {"label": "docs: build all", "type": "npm", "script": "build:all", "problemMatcher": []},
+    {"label": "docs: lint markdown", "type": "npm", "script": "lint:md", "problemMatcher": []}
+  ]
+}

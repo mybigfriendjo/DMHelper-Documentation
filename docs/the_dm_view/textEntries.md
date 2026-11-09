@@ -1,11 +1,13 @@
 ---
 sidebar_position: 2
+title: Text Entries
 ---
 
 # Text Entries
 
-![Text View](./img/textView.png)
+:::note[Page not written yet]
 
-A simple text entry useful for recording information, encounter details, campaign notes like party progress, surprising events, spontaneous notes to self or pretty much anything else you need to write down.
+The manual for DMHelper 3.11 is being written. This page marks where **Text Entries** will be
+documented. Want to help? Use *Edit this page* at the bottom to contribute on GitHub.
 
-If DMH finds the name of another entry in the campaign tree, it automatically converts it into a hyperlink in the text field to allow a quick reference.
+:::

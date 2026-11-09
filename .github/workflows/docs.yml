@@ -1,0 +1,95 @@
+# DMHelper documentation — build, check and deploy to GitHub Pages
+#
+# - Pull requests: build website + PDFs as a check (nothing is deployed).
+# - Pushes to main: build, then deploy build/ to GitHub Pages. The PDFs are
+#   published with the site under /pdf/ and attached to the run as an artifact.
+#
+# One-time setup in the repository: Settings → Pages → "Build and deployment"
+# → Source: "GitHub Actions". Works unchanged in forks: url/baseUrl are derived
+# from the repository owner and name.
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: docs-build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check config
+        run: npm run typecheck
+
+      - name: Lint Markdown
+        run: npm run lint:md
+
+      - name: Install Chromium for the PDF build
+        run: npx playwright install --with-deps chromium
+
+      - name: Derive site URL from the repository
+        id: site
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          echo "url=https://${OWNER,,}.github.io" >> "$GITHUB_OUTPUT"
+          echo "base_url=/${REPO}/" >> "$GITHUB_OUTPUT"
+
+      - name: Build website
+        env:
+          DOCS_SITE_URL: ${{ steps.site.outputs.url }}
+          DOCS_BASE_URL: ${{ steps.site.outputs.base_url }}
+        run: npm run build
+
+      - name: Build PDFs (one per documentation version)
+        run: npm run pdf
+
+      - name: Publish the PDFs with the website (/pdf/)
+        run: |
+          mkdir -p build/pdf
+          cp dist/pdf/*.pdf build/pdf/
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation-pdf
+          path: dist/pdf/*.pdf
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # Never cancel a running Pages deployment; queue instead.
+    concurrency:
+      group: docs-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

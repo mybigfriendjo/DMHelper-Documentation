@@ -1,11 +1,13 @@
 ---
 sidebar_position: 1
+title: General Combat View
 ---
 
 # General Combat View
 
-Generally speaking, you can do everything you need within the combat view (a great change vs previous versions...), including editing the fog of war - even outside of what the players can see, using the pointer or measuring distances.
+:::note[Page not written yet]
 
-![Combat View](./img/combatView.png)
+The manual for DMHelper 3.11 is being written. This page marks where **General Combat View** will be
+documented. Want to help? Use *Edit this page* at the bottom to contribute on GitHub.
 
-You need to add a map separately to the campaign before you can add it to the combat. Also, you can only add tokens after you have added a map.
+:::

@@ -1,0 +1,6 @@
+node_modules
+build
+dist
+.docusaurus
+.pdf-tmp
+package-lock.json

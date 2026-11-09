@@ -1,44 +1,97 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Website theme overrides (Infima CSS variables).
+ * Generate a full palette at https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima
+ * The PDF has its own stylesheet in pdf/print.css but reuses these colours.
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #00c6e1;
-  --ifm-color-primary-dark: #00b2cb;
-  --ifm-color-primary-darker: #00a8bf;
-  --ifm-color-primary-darkest: #008b9e;
-  --ifm-color-primary-light: #00daf8;
-  --ifm-color-primary-lighter: #04e1ff;
-  --ifm-color-primary-lightest: #25e5ff;
+  --ifm-color-primary: #7a3b2e;
+  --ifm-color-primary-dark: #6e3529;
+  --ifm-color-primary-darker: #683227;
+  --ifm-color-primary-darkest: #562920;
+  --ifm-color-primary-light: #864133;
+  --ifm-color-primary-lighter: #8c4435;
+  --ifm-color-primary-lightest: #9e4d3c;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  /* Text highlight colours used by <mark> (see "Highlighted text" below). */
+  --hl-yellow: #fff176;
+  --hl-lime: #c5e1a5;
+  --hl-orange: #ffcc80;
+  --hl-magenta: #f8bbd0;
+  --hl-cornflowerblue: #bbdefb;
+  --hl-blue: #1e5cb3;
+  --hl-blue-text: #fff;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #6aecff;
-  --ifm-color-primary-dark: #46e7ff;
-  --ifm-color-primary-darker: #34e5ff;
-  --ifm-color-primary-darkest: #00dcfd;
-  --ifm-color-primary-light: #8ef1ff;
-  --ifm-color-primary-lighter: #a0f3ff;
-  --ifm-color-primary-lightest: #d6faff;
+  --ifm-color-primary: #e0a080;
+  --ifm-color-primary-dark: #da906a;
+  --ifm-color-primary-darker: #d6885f;
+  --ifm-color-primary-darkest: #c96f3f;
+  --ifm-color-primary-light: #e6b096;
+  --ifm-color-primary-lighter: #eab8a1;
+  --ifm-color-primary-lightest: #f3d0c1;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  --hl-yellow: #8a7a00;
+  --hl-lime: #4d6b2a;
+  --hl-orange: #8a5a1a;
+  --hl-magenta: #7a3a5a;
+  --hl-cornflowerblue: #2a5a8a;
+  --hl-blue: #6fa8ff;
+  --hl-blue-text: #0b1a33;
 }
 
-.codestylelight {
-  font-family: var(--ifm-font-family-monospace);
-  font-size: var(--ifm-code-font-size);
-  border: 0.1rem solid rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+/* ---- Highlighted text ------------------------------------------------------
+ * Plain HTML <mark> works in every .md page (no MDX needed):
+ *   <mark>yellow by default</mark>
+ *   <mark class="hl-lime">lime</mark>  hl-orange | hl-magenta | hl-cornflowerblue
+ *   <mark class="hl-blue">dark blue with light text</mark>
+ * Use it to tie words in the text to colour-coded areas of a screenshot.
+ */
+.markdown mark {
+  background: var(--hl-yellow);
+  color: inherit;
+  padding: 0 0.25em;
+  border-radius: 3px;
 }
 
-.codestyledark {
-  font-family: var(--ifm-font-family-monospace);
-  font-size: var(--ifm-code-font-size);
-  border: 0.1rem solid rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+.markdown mark.hl-lime {
+  background: var(--hl-lime);
+}
+
+.markdown mark.hl-orange {
+  background: var(--hl-orange);
+}
+
+.markdown mark.hl-magenta {
+  background: var(--hl-magenta);
+}
+
+.markdown mark.hl-cornflowerblue {
+  background: var(--hl-cornflowerblue);
+}
+
+.markdown mark.hl-blue {
+  background: var(--hl-blue);
+  color: var(--hl-blue-text);
+}
+
+/* ---- Icon tables -------------------------------------------------------------
+ * Tables that describe toolbar buttons put the button image in the first
+ * column: `| ![Zoom in](./img/iconzoomin.png) | The **Zoom In** button ... |`.
+ * Images in a table's first column are rendered at icon size automatically, so
+ * plain Markdown image syntax is enough (no width attribute, no MDX).
+ */
+.markdown table td:first-child > img {
+  max-height: 40px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.markdown table td:first-child {
+  text-align: center;
+  white-space: nowrap;
 }

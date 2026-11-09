@@ -1,0 +1,6 @@
+{
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "The manual for {siteTitle} {versionLabel} is still being written and incomplete.",
+    "description": "Banner shown on pages of the current (unreleased) docs version"
+  }
+}

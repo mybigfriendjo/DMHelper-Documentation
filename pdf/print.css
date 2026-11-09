@@ -1,0 +1,284 @@
+/*
+ * PDF stylesheet. Loaded AFTER the website's own CSS, so the Infima variables
+ * (e.g. --ifm-color-primary) are available and website styling for code
+ * blocks, tables and admonitions carries over. Override here what should look
+ * different on paper.
+ *
+ * Debug workflow:  npm run pdf:debug  -> open .pdf-tmp/document.html in a
+ * browser and use "print preview" or DevTools (rendering -> emulate print).
+ */
+
+/* ---- Page setup --------------------------------------------------------- */
+@page {
+  /* Size and margins are set by build-pdf.mjs (format + margin options). */
+}
+
+:root {
+  --pdf-font-body: "Inter", "Noto Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --pdf-font-heading: "Inter", "Noto Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --pdf-font-mono: "JetBrains Mono", "Fira Code", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  --pdf-accent: var(--ifm-color-primary, #7a3b2e);
+  --pdf-text: #1c1c1c;
+  --pdf-muted: #666;
+  --pdf-rule: #d9d9d9;
+}
+
+html,
+body.pdf-document {
+  background: #fff;
+  color: var(--pdf-text);
+  font-family: var(--pdf-font-body);
+  font-size: 10.5pt;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hide anything the website might still render that has no place on paper. */
+.pdf-document nav,
+.pdf-document .navbar,
+.pdf-document .footer,
+.pdf-document .hash-link,
+.pdf-document .theme-doc-toc-mobile,
+.pdf-document .pagination-nav,
+.pdf-document .theme-edit-this-page,
+.pdf-document .theme-last-updated,
+.pdf-document button {
+  display: none !important;
+}
+
+/* ---- Cover ---------------------------------------------------------------- */
+.pdf-cover {
+  page-break-after: always;
+  break-after: page;
+  min-height: 230mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10mm;
+  border-left: 6pt solid var(--pdf-accent);
+}
+
+.cover-brand {
+  font-size: 14pt;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--pdf-accent);
+  margin-bottom: 8mm;
+}
+
+.cover-title {
+  font-family: var(--pdf-font-heading);
+  font-size: 34pt;
+  line-height: 1.15;
+  margin: 0 0 6mm;
+  color: var(--pdf-text);
+}
+
+.cover-subtitle {
+  font-size: 15pt;
+  color: var(--pdf-muted);
+  margin: 0 0 20mm;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 16mm;
+  font-size: 10.5pt;
+}
+
+.cover-meta div {
+  display: flex;
+  flex-direction: column;
+}
+
+.cover-meta span {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 7.5pt;
+  color: var(--pdf-muted);
+}
+
+/* ---- Table of contents ---------------------------------------------------- */
+.pdf-toc {
+  page-break-after: always;
+  break-after: page;
+}
+
+.pdf-toc h1 {
+  font-size: 22pt;
+  margin: 0 0 8mm;
+  color: var(--pdf-accent);
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 1;
+}
+
+.toc-list li {
+  border-bottom: 1px dotted var(--pdf-rule);
+  padding: 2.2mm 0;
+}
+
+.toc-list a {
+  display: flex;
+  gap: 4mm;
+  color: var(--pdf-text);
+  text-decoration: none;
+}
+
+.toc-num {
+  min-width: 8mm;
+  color: var(--pdf-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Category pages (generated index) become short section-divider chapters. */
+.pdf-category {
+  padding-top: 60mm;
+}
+
+.pdf-category h1 {
+  font-size: 28pt !important;
+  border-bottom: none !important;
+}
+
+.pdf-category header .badge {
+  display: none;
+}
+
+.toc-category {
+  font-weight: 600;
+}
+
+/* ---- Chapters (one per documentation page) -------------------------------- */
+.pdf-page {
+  page-break-before: always;
+  break-before: page;
+}
+
+.pdf-page .markdown {
+  --ifm-h1-font-size: 22pt;
+  --ifm-h2-font-size: 16pt;
+  --ifm-h3-font-size: 13pt;
+  --ifm-h4-font-size: 11.5pt;
+}
+
+.pdf-page h1,
+.pdf-page h2,
+.pdf-page h3,
+.pdf-page h4 {
+  font-family: var(--pdf-font-heading);
+  page-break-after: avoid;
+  break-after: avoid;
+  color: var(--pdf-text);
+}
+
+.pdf-page h1 {
+  color: var(--pdf-accent);
+  border-bottom: 1.5pt solid var(--pdf-accent);
+  padding-bottom: 2mm;
+  margin-top: 0;
+}
+
+/* Chapter numbering matches the table of contents. */
+body.pdf-document {
+  counter-reset: chapter;
+}
+
+.pdf-page {
+  counter-increment: chapter;
+}
+
+.pdf-page h1::before {
+  content: counter(chapter) ". ";
+}
+
+.pdf-page p,
+.pdf-page li {
+  orphans: 3;
+  widows: 3;
+}
+
+.pdf-page a {
+  color: var(--pdf-accent);
+  text-decoration: none;
+}
+
+/* Show external URLs after links (internal anchors stay clean). */
+.pdf-page a[href^="http"]::after {
+  content: " (" attr(href) ")";
+  font-size: 0.85em;
+  color: var(--pdf-muted);
+  word-break: break-all;
+}
+
+/* ---- Images ---------------------------------------------------------------- */
+.pdf-page img {
+  max-width: 100%;
+  height: auto;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- Code ------------------------------------------------------------------- */
+.pdf-page code,
+.pdf-page pre {
+  font-family: var(--pdf-font-mono);
+  font-size: 8.5pt;
+}
+
+.pdf-page pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  border: 1px solid var(--pdf-rule);
+}
+
+/* ---- Tables ---------------------------------------------------------------- */
+.pdf-page table {
+  display: table;
+  width: 100%;
+  font-size: 9.5pt;
+  page-break-inside: auto;
+}
+
+.pdf-page thead {
+  display: table-header-group; /* repeat header row on each page */
+}
+
+.pdf-page tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- Admonitions ------------------------------------------------------------ */
+.pdf-page .theme-admonition {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  box-shadow: none;
+}
+
+/* ---- Tabs: print all tab panels, labelled --------------------------------- */
+.pdf-page .tabs {
+  display: none;
+}
+
+.pdf-page [role="tabpanel"] {
+  display: block !important;
+  border-left: 2pt solid var(--pdf-rule);
+  padding-left: 4mm;
+  margin: 3mm 0;
+}
+
+/* ---- Mermaid diagrams ------------------------------------------------------- */
+.pdf-page .docusaurus-mermaid-container,
+.pdf-page svg {
+  max-width: 100%;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}

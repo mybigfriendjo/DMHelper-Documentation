@@ -1,0 +1,16 @@
+{
+  // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+  "config": {
+    "default": true,
+    "MD013": false,          // line length: prose is wrapped by the editor
+    "MD033": false,          // inline HTML is fine (MDX, <details>, <kbd>)
+    "MD041": false,          // first line heading: frontmatter comes first
+    "MD024": { "siblings_only": true }, // duplicate headings allowed in different sections
+    "MD025": false,          // docusaurus title + h1 may coexist
+    "MD046": { "style": "fenced" },
+    "MD049": { "style": "asterisk" },
+    "MD050": { "style": "asterisk" }
+  },
+  "globs": ["docs/**/*.{md,mdx}", "versioned_docs/**/*.{md,mdx}"],
+  "ignores": ["node_modules", "build", "dist", ".docusaurus"]
+}

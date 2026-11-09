@@ -1,11 +1,13 @@
 ---
 sidebar_position: 6
+title: Party View
 ---
 
 # Party View
 
-![Party View](./img/partyView.png)
+:::note[Page not written yet]
 
-The Party View is very simply a place where you can see an overview of your party and all of their stats one might need at a quick glance. We also have a quick sync button beside all the player character mini stat blocks in order to sync your players' D\&D Beyond character stats instantly.
+The manual for DMHelper 3.11 is being written. This page marks where **Party View** will be
+documented. Want to help? Use *Edit this page* at the bottom to contribute on GitHub.
 
-More about the Party View [here](/docs/category/thePartyPlayerCharactersAndNPCs)
+:::
