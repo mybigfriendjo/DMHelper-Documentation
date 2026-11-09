@@ -10,7 +10,9 @@
 
 /* ---- Page setup --------------------------------------------------------- */
 @page {
-  /* Size and margins are set by build-pdf.mjs (format + margin options). */
+  /* Size and margins are set by build-pdf.mjs (format + margin options).
+     Note: Chromium prints the footer on every page, including the cover;
+     `@page :first { margin: 0 }` does not suppress it (tested). */
 }
 
 :root {
@@ -107,33 +109,97 @@ body.pdf-document {
 
 .pdf-toc h1 {
   font-size: 22pt;
-  margin: 0 0 8mm;
+  margin: 0 0 6mm;
   color: var(--pdf-accent);
 }
 
+/*
+ * One row per chapter: number | title ...leader... page. The whole row is a
+ * link. `toc-depth-N` is the sidebar depth (0 = top level / category page).
+ * Page numbers are filled in by build-pdf.mjs (two-pass print); the column has
+ * a fixed width so the layout is identical with and without numbers.
+ */
 .toc-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  columns: 1;
 }
 
 .toc-list li {
-  border-bottom: 1px dotted var(--pdf-rule);
-  padding: 2.2mm 0;
+  padding: 0;
 }
 
 .toc-list a {
   display: flex;
-  gap: 4mm;
+  align-items: flex-end;
   color: var(--pdf-text);
   text-decoration: none;
+  line-height: 1.3;
+  padding: 1.1mm 0;
 }
 
 .toc-num {
-  min-width: 8mm;
+  flex: 0 0 auto;
   color: var(--pdf-accent);
   font-variant-numeric: tabular-nums;
+}
+
+.toc-title {
+  flex: 0 1 auto;
+}
+
+.toc-leader {
+  flex: 1 1 6mm;
+  border-bottom: 1px dotted #999;
+  margin: 0 1.5mm 0.35em;
+}
+
+.toc-pg {
+  flex: 0 0 9mm;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.toc-no-pages .toc-leader,
+.toc-no-pages .toc-pg {
+  display: none;
+}
+
+/* Top level: categories and stand-alone pages. */
+.toc-depth-0 a {
+  font-weight: 600;
+  font-size: 11pt;
+  margin-top: 3mm;
+  break-after: avoid;
+}
+
+.toc-depth-0:first-child a {
+  margin-top: 0;
+}
+
+.toc-depth-0 .toc-num {
+  min-width: 9mm;
+}
+
+/* Pages inside a category. */
+.toc-depth-1 a {
+  font-size: 9.5pt;
+  padding-left: 9mm;
+}
+
+.toc-depth-1 .toc-num {
+  min-width: 11mm;
+}
+
+/* Deeper levels (nested categories). */
+.toc-depth-2 a {
+  font-size: 9pt;
+  padding-left: 20mm;
+  color: #333;
+}
+
+.toc-depth-2 .toc-num {
+  min-width: 13mm;
 }
 
 /* Category pages (generated index) become short section-divider chapters. */
@@ -148,10 +214,6 @@ body.pdf-document {
 
 .pdf-category header .badge {
   display: none;
-}
-
-.toc-category {
-  font-weight: 600;
 }
 
 /* ---- Chapters (one per documentation page) -------------------------------- */
@@ -184,17 +246,10 @@ body.pdf-document {
   margin-top: 0;
 }
 
-/* Chapter numbering matches the table of contents. */
-body.pdf-document {
-  counter-reset: chapter;
-}
-
-.pdf-page {
-  counter-increment: chapter;
-}
-
-.pdf-page h1::before {
-  content: counter(chapter) ". ";
+/* Chapter number (1, 2.1, ...) set by build-pdf.mjs; matches the table of contents. */
+.pdf-page h1[data-num]::before {
+  content: attr(data-num) " ";
+  margin-right: 0.3em;
 }
 
 .pdf-page p,

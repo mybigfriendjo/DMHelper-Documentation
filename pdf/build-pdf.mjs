@@ -12,7 +12,14 @@
  *     HTML. The page order is therefore exactly the sidebar order.
  *  4. Composes one HTML document per version: cover page + table of contents +
  *     all pages, with the site's own stylesheets plus `pdf/print.css` on top.
- *  5. Prints it to PDF with headers/footers, page numbers and PDF bookmarks.
+ *     The page's breadcrumbs give its depth in the sidebar, which drives the
+ *     hierarchical chapter numbers (2, 2.1, 2.2, ...) and the TOC indentation.
+ *  5. Prints it to PDF with a footer (page numbers) and PDF bookmarks. Chromium
+ *     cannot put page numbers into the table of contents, so the document is
+ *     printed twice: the first pass is read back with `pdftotext` (poppler) to
+ *     find the page each chapter starts on, the numbers are written into the
+ *     TOC and the document is printed again. The result is checked the same
+ *     way; without `pdftotext` the TOC simply has no page numbers.
  *
  * Usage
  *   npm run build && npm run pdf                 # every version
@@ -23,12 +30,16 @@
  *   PDF_FORMAT     paper format, e.g. A4 (default) or Letter
  *   PDF_MAX_PAGES  safety limit for the crawl per version (default 500)
  */
+import {execFile} from 'node:child_process';
 import http from 'node:http';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import {promisify} from 'node:util';
 import {chromium} from 'playwright';
+
+const execFileAsync = promisify(execFile);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -46,9 +57,13 @@ const OPTIONS = {
   subtitle: 'User manual',
   date: new Date().toISOString().slice(0, 10),
   format: process.env.PDF_FORMAT ?? 'A4',
+  // Must match the padding of the footer template so the footer aligns with the text block.
+  margin: {top: '16mm', bottom: '18mm', left: '18mm', right: '18mm'},
   maxPages: Number(process.env.PDF_MAX_PAGES ?? 500),
   keepHtml: Boolean(args['keep-html']),
   outFile: args.out ?? null,
+  // Print passes: 1 = measure, 2 = final, further passes only if the check fails.
+  maxPrintPasses: 3,
   // Selectors for the Docusaurus classic theme (3.x). Adjust if the theme is swizzled.
   // Regular doc pages carry `.theme-doc-markdown`; category "generated index"
   // pages only have a <header> (title + description) followed by nav cards,
@@ -246,7 +261,10 @@ async function collectPages(page, origin, startPath) {
         const titleEl = document.querySelector(titleSelector);
         const title = titleEl?.textContent?.trim() || document.title.replace(/\s*\|.*$/, '');
         const next = document.querySelector(nextSelector)?.getAttribute('href') ?? null;
-        return {title, html: clone.innerHTML, next, isCategory};
+        // Breadcrumbs: Home > (category >)* page. Depth 0 = top level of the sidebar.
+        const crumbs = document.querySelectorAll('.theme-doc-breadcrumbs .breadcrumbs__item').length;
+        const depth = crumbs ? Math.max(0, crumbs - 2) : 0;
+        return {title, html: clone.innerHTML, next, isCategory, depth};
       },
       OPTIONS,
     );
@@ -257,11 +275,23 @@ async function collectPages(page, origin, startPath) {
     }
 
     const id = `p-${slugify(pathname === '/' ? 'index' : pathname)}`;
-    pages.push({pathname, id, title: data.title, html: data.html, isCategory: data.isCategory});
+    pages.push({pathname, id, title: data.title, html: data.html, isCategory: data.isCategory, depth: data.depth});
     console.log(`  + ${pathname}  —  ${data.title}`);
     current = data.next ? new URL(data.next, origin).toString() : null;
   }
+  numberChapters(pages);
   return {pages, stylesheets: stylesheets ?? []};
+}
+
+/** Hierarchical chapter numbers from the sidebar depth: 1, 2, 2.1, 2.2, 3, ... */
+function numberChapters(pages) {
+  const counters = [];
+  for (const p of pages) {
+    counters.length = p.depth + 1; // leaving a level resets the deeper counters
+    for (let i = 0; i < p.depth; i++) counters[i] ??= 0; // child without a parent page
+    counters[p.depth] = (counters[p.depth] ?? 0) + 1;
+    p.number = counters.join('.');
+  }
 }
 
 // --- Compose -----------------------------------------------------------------
@@ -279,17 +309,29 @@ function rewriteInternalLinks(html, pages) {
   });
 }
 
-function composeDocument({pages, stylesheets, origin, printCss, version}) {
+/** Put the chapter number on the page's first <h1>; print.css renders it via attr(). */
+function withChapterNumber(html, number) {
+  return html.replace(/<h1(\s[^>]*)?>/i, (m, attrs = '') => `<h1${attrs} data-num="${number}">`);
+}
+
+/**
+ * @param pageNumbers Map chapter id -> PDF page number (null: unknown yet / no
+ *   pdftotext). Placeholders keep the TOC layout identical between passes.
+ */
+function composeDocument({pages, stylesheets, origin, printCss, version, pageNumbers}) {
   const toc = pages
-    .map((p, i) => `<li class="${p.isCategory ? 'toc-category' : 'toc-doc'}"><a href="#${p.id}"><span class="toc-num">${i + 1}</span><span class="toc-title">${escapeHtml(p.title)}</span></a></li>`)
+    .map((p) => {
+      const pg = pageNumbers ? (pageNumbers.get(p.id) ?? TOC_PLACEHOLDER) : '';
+      return `<li class="toc-depth-${Math.min(p.depth, 2)}${p.isCategory ? ' toc-category' : ' toc-doc'}"><a href="#${p.id}"><span class="toc-num">${p.number}</span><span class="toc-title">${escapeHtml(p.title)}</span><span class="toc-leader"></span><span class="toc-pg">${pg}</span></a></li>`;
+    })
     .join('\n');
 
   const body = pages
     .map(
-      (p, i) => `
-<section class="pdf-page${p.isCategory ? ' pdf-category' : ''}" id="${p.id}" data-chapter="${i + 1}">
+      (p) => `
+<section class="pdf-page${p.isCategory ? ' pdf-category' : ''}" id="${p.id}" data-chapter="${p.number}">
 <div class="theme-doc-markdown markdown">
-${rewriteInternalLinks(p.html, pages)}
+${withChapterNumber(rewriteInternalLinks(p.html, pages), p.number)}
 </div>
 </section>`,
     )
@@ -318,7 +360,7 @@ ${printCss}
     <div><span>Date</span><strong>${escapeHtml(OPTIONS.date)}</strong></div>
   </div>
 </section>
-<section class="pdf-toc">
+<section class="pdf-toc${pageNumbers ? '' : ' toc-no-pages'}">
   <h1>Contents</h1>
   <ol class="toc-list">
 ${toc}
@@ -327,6 +369,81 @@ ${toc}
 ${body}
 </body>
 </html>`;
+}
+
+// --- Print -------------------------------------------------------------------
+/** Print the composed HTML (served from `composedUrl`) to `outFile`. */
+async function printPdf({page, origin, composedUrl, outFile, version, withFooter}) {
+  await page.goto(`${origin}${composedUrl}`, {waitUntil: 'networkidle'});
+  await page.emulateMedia({media: 'print'});
+  // Wait for web fonts so measurements are final.
+  await page.evaluate(() => document.fonts?.ready);
+
+  // Header/footer templates are rendered by Chromium outside the page CSS:
+  // inline styles and an explicit font-size are required; web fonts are not
+  // available, only fonts installed on the machine. No header: the chapter
+  // title is already on the page and the manual name is in the footer.
+  const footerStyle = 'width:100%;font-size:8pt;color:#777;font-family:Inter,\'Noto Sans\',\'Segoe UI\',Helvetica,Arial,sans-serif;padding:0 18mm;display:flex;justify-content:space-between;';
+  const footerLeft = `${escapeHtml(OPTIONS.title)} · ${escapeHtml(version.label)}`;
+  await page.pdf({
+    path: outFile,
+    format: OPTIONS.format,
+    printBackground: true,
+    preferCSSPageSize: false,
+    displayHeaderFooter: withFooter,
+    headerTemplate: '<span></span>', // an empty string would bring back Chromium's default header
+    footerTemplate: `<div style="${footerStyle}"><span>${footerLeft}</span><span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div>`,
+    margin: OPTIONS.margin,
+    outline: true, // PDF bookmarks from headings
+    tagged: true, // accessible/tagged PDF
+  });
+  await page.emulateMedia({media: 'screen'});
+}
+
+let pdftotextAvailable = null;
+async function hasPdftotext() {
+  if (pdftotextAvailable === null) {
+    pdftotextAvailable = await execFileAsync('pdftotext', ['-v']).then(
+      () => true,
+      (err) => err.code !== 'ENOENT', // pdftotext -v exits non-zero but exists
+    );
+    if (!pdftotextAvailable) console.warn('  ! pdftotext (poppler-utils) not found: the table of contents will have no page numbers.');
+  }
+  return pdftotextAvailable;
+}
+
+// Pass-1 placeholder for the TOC page numbers. Not a digit, so a TOC row
+// ("2.1 Title ·") can never be mistaken for the chapter heading ("2.1 Title").
+const TOC_PLACEHOLDER = '·';
+
+/**
+ * Find the PDF page each chapter starts on. Every chapter begins on a new page
+ * with its numbered heading ("2.1 Title") as the first text on the page, so the
+ * chapters are matched in order against the first text line of each page. The
+ * line must be the heading or, if the heading wraps, the start of it.
+ * @returns Map chapter id -> page number (1-based); unmatched chapters are absent.
+ */
+async function locateChapters(pdfFile, pages) {
+  const {stdout} = await execFileAsync('pdftotext', ['-layout', pdfFile, '-'], {maxBuffer: 256 * 1024 * 1024});
+  const norm = (s) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+  const found = new Map();
+  let next = 0;
+  const pdfPages = stdout.split('\f');
+  for (let pageNo = 1; pageNo <= pdfPages.length && next < pages.length; pageNo++) {
+    const firstLine = pdfPages[pageNo - 1].split('\n').map(norm).find(Boolean);
+    if (!firstLine) continue;
+    // Look a few chapters ahead so one undetectable chapter does not derail the rest.
+    for (let k = next; k < Math.min(next + 3, pages.length); k++) {
+      const heading = norm(`${pages[k].number} ${pages[k].title}`);
+      const minLength = Math.min(heading.length, pages[k].number.length + 1 + 8);
+      if (firstLine.length >= minLength && heading.startsWith(firstLine)) {
+        found.set(pages[k].id, pageNo);
+        next = k + 1;
+        break;
+      }
+    }
+  }
+  return found;
 }
 
 // --- Main --------------------------------------------------------------------
@@ -339,38 +456,34 @@ async function buildOne({page, origin, printCss, extraFiles, version}) {
   const composedPath = path.join(TMP_DIR, `document-${safeVersion}.html`);
   const composedUrl = `/__pdf__/document-${safeVersion}.html`;
   extraFiles.set(composedUrl, composedPath);
-
-  const html = composeDocument({pages, stylesheets, origin, printCss, version});
-  await fsp.writeFile(composedPath, html, 'utf8');
-
-  await page.goto(`${origin}${composedUrl}`, {waitUntil: 'networkidle'});
-  await page.emulateMedia({media: 'print'});
-  // Wait for web fonts so measurements are final.
-  await page.evaluate(() => document.fonts?.ready);
-
   const outFile = OPTIONS.outFile ? path.resolve(ROOT, OPTIONS.outFile) : path.join(OUT_DIR, `${OPTIONS.appName}-Documentation-${safeVersion}.pdf`);
+  const measureFile = path.join(TMP_DIR, `measure-${safeVersion}.pdf`);
 
-  const footerLeft = `${escapeHtml(OPTIONS.title)} · ${escapeHtml(version.label)}`;
-  await page.pdf({
-    path: outFile,
-    format: OPTIONS.format,
-    printBackground: true,
-    preferCSSPageSize: false,
-    displayHeaderFooter: true,
-    // Header/footer templates are rendered by Chromium outside the page CSS:
-    // inline styles and an explicit font-size are required.
-    headerTemplate: `<div style="width:100%;font-size:8px;color:#888;font-family:Helvetica,Arial,sans-serif;padding:0 14mm;display:flex;justify-content:space-between;">
-          <span class="title"></span><span>${escapeHtml(OPTIONS.appName)}</span></div>`,
-    footerTemplate: `<div style="width:100%;font-size:8px;color:#888;font-family:Helvetica,Arial,sans-serif;padding:0 14mm;display:flex;justify-content:space-between;">
-          <span>${footerLeft}</span><span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div>`,
-    margin: {top: '20mm', bottom: '18mm', left: '18mm', right: '18mm'},
-    outline: true, // PDF bookmarks from headings
-    tagged: true, // accessible/tagged PDF
-  });
-  await page.emulateMedia({media: 'screen'});
+  const compose = (pageNumbers) => fsp.writeFile(composedPath, composeDocument({pages, stylesheets, origin, printCss, version, pageNumbers}), 'utf8');
+  const print = (file, pageNumbers, withFooter) => compose(pageNumbers).then(() => printPdf({page, origin, composedUrl, outFile: file, version, withFooter}));
+
+  if (!(await hasPdftotext())) {
+    await print(outFile, null, true);
+  } else {
+    // Pass 1: print with empty page-number placeholders and read back where the chapters start.
+    await print(measureFile, new Map(), false);
+    let pageNumbers = await locateChapters(measureFile, pages);
+    // Pass 2..n: print with the numbers, check that the chapters still start on those pages
+    // (the TOC has a fixed-width number column, so this normally holds after pass 2).
+    for (let pass = 2; pass <= OPTIONS.maxPrintPasses; pass++) {
+      await print(outFile, pageNumbers, true);
+      const check = await locateChapters(outFile, pages);
+      const stable = pages.every((p) => check.get(p.id) === pageNumbers.get(p.id));
+      if (stable) break;
+      console.warn(`  ! chapter pages moved after pass ${pass}; printing again`);
+      pageNumbers = check;
+    }
+    const missing = pages.filter((p) => !pageNumbers.has(p.id));
+    if (missing.length) console.warn(`  ! no page number found for: ${missing.map((p) => `${p.number} ${p.title}`).join(', ')}`);
+  }
 
   const stat = await fsp.stat(outFile);
-  console.log(`PDF written: ${path.relative(ROOT, outFile)} (${pages.length} pages of content, ${(stat.size / 1024).toFixed(0)} KiB)`);
+  console.log(`PDF written: ${path.relative(ROOT, outFile)} (${pages.length} chapters, ${(stat.size / 1024).toFixed(0)} KiB)`);
   if (OPTIONS.keepHtml) {
     console.log(`Composed HTML kept at ${path.relative(ROOT, composedPath)} (open it in a browser to debug styling).`);
   }
